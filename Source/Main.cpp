@@ -22,7 +22,7 @@ int main(int argc, wchar_t argv[]) {
         return 1;
     }
 
-    GamePath_t TeardownPath = *PathResult;
+    GamePath_t AIPath = *PathResult;
 
     // Launch & Inject
     //------------------------------------------------------------------------
@@ -30,7 +30,7 @@ int main(int argc, wchar_t argv[]) {
 
     std::string DllPath = "ALIM-Core.dll"; // TODO: Change for debug builds since it's not all bundled together. Maybe use Premake to find it and make a define to the path.
 
-    std::expected<InjectInfo_t, Launcher::InjectError> InjectResult = Launcher::SpawnAndInject(TeardownPath, DllPath);
+    std::expected<InjectInfo_t, Launcher::InjectError> InjectResult = Launcher::SpawnAndInject(AIPath, DllPath);
     if (!InjectResult.has_value()) {
         Launcher::InjectError Error = InjectResult.error();
         std::string ErrorString = std::format("Failed Injecting: {}", Launcher::ErrorFromU8<Launcher::InjectError>(Error));
