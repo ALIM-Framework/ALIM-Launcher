@@ -1,0 +1,8 @@
+## Directories
+Build/
+
+## Files
+*.10x
+*.sln
+*.vcxproj*
+.vs
