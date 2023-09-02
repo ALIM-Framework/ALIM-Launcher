@@ -78,7 +78,7 @@ LPWSTR StringToLPWSTR(const std::string& String) {
     return WideString;
 }
 
-std::expected<InjectInfo_t, Launcher::InjectError> Launcher::SpawnAndInject(GamePath_t& Path, const std::string& DllPath) {
+std::expected<PROCESS_INFORMATION, Launcher::InjectError> Launcher::SpawnAndInject(GamePath_t& Path, const std::string& DllPath) {
     PROCESS_INFORMATION ProcessInfo = { 0 };
     STARTUPINFOW StartupInfo = { 0 };
     StartupInfo.cb = sizeof(StartupInfo);
@@ -113,9 +113,5 @@ std::expected<InjectInfo_t, Launcher::InjectError> Launcher::SpawnAndInject(Game
     }
 
     VirtualFreeEx(ProcessInfo.hProcess, Thread, AbsoluteDllPath.length(), MEM_RELEASE);
-
-    return InjectInfo_t {
-        .Thread = NULL,
-        .ProcessInfo = ProcessInfo
-    };
+    return ProcessInfo;
 }

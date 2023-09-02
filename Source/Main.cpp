@@ -8,7 +8,11 @@ import <string>;
 import <expected>;
 import <string_view>;
 
-int main(int argc, wchar_t argv[]) {
+int WINAPI WinMain(HINSTANCE hInstance,
+                   HINSTANCE hPrevInstance,
+                   LPSTR pCmdLine,
+                   int nCmdShow)
+{
     // Get Path
     //------------------------------------------------------------------------
     std::expected<GamePath_t, Launcher::PathError> PathResult = Launcher::GetPath("Alien Isolation", "AI.exe");
@@ -30,7 +34,7 @@ int main(int argc, wchar_t argv[]) {
 
     std::string DllPath = "ALIM-Core.dll"; // TODO: Change for debug builds since it's not all bundled together. Maybe use Premake to find it and make a define to the path.
 
-    std::expected<InjectInfo_t, Launcher::InjectError> InjectResult = Launcher::SpawnAndInject(AIPath, DllPath);
+    std::expected<PROCESS_INFORMATION, Launcher::InjectError> InjectResult = Launcher::SpawnAndInject(AIPath, DllPath);
     if (!InjectResult.has_value()) {
         Launcher::InjectError Error = InjectResult.error();
         std::string ErrorString = std::format("Failed Injecting: {}", Launcher::ErrorFromU8<Launcher::InjectError>(Error));
@@ -52,11 +56,13 @@ int main(int argc, wchar_t argv[]) {
         return 1;
     }
 
-    InjectInfo_t InjectInfo = *InjectResult;
+    PROCESS_INFORMATION ProcessInfo = *InjectResult;
 
-    ResumeThread(InjectInfo.ProcessInfo.hThread);
-    WaitForSingleObject(InjectInfo.ProcessInfo.hProcess, INFINITE);
+    ResumeThread(ProcessInfo.hThread);
+    WaitForSingleObject(ProcessInfo.hProcess, INFINITE);
 
-    CloseHandle(InjectInfo.ProcessInfo.hProcess);
-    CloseHandle(InjectInfo.ProcessInfo.hThread);
+    CloseHandle(ProcessInfo.hProcess);
+    CloseHandle(ProcessInfo.hThread);
+
+    return 0;
 }

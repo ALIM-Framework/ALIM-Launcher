@@ -9,7 +9,7 @@ workspace "ALIM-Launcher"
     language "C++"
 
 project "ALIM-Launcher"
-    kind "ConsoleApp"
+    kind "WindowedApp"
     targetdir "Build/%{cfg.buildcfg}"
     objdir "Build/Intermediate/%{cfg.buildcfg}"
 

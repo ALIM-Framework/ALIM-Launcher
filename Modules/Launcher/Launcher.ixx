@@ -9,11 +9,6 @@ export struct GamePath_t {
     std::string ExecutablePath;
 };
 
-export struct InjectInfo_t {
-    HANDLE Thread;
-    PROCESS_INFORMATION ProcessInfo;
-};
-
 export namespace Launcher {
     enum class PathError : uint8_t {
         BAD_LIBRARY_FOLDERS = 0,
@@ -31,7 +26,7 @@ export namespace Launcher {
     };
 
     inline std::expected<GamePath_t, PathError> GetPath(std::string_view FolderName, std::string_view ExecutableName);
-    inline std::expected<InjectInfo_t, InjectError> SpawnAndInject(GamePath_t& Path, const std::string& DllPath);
+    inline std::expected<PROCESS_INFORMATION, InjectError> SpawnAndInject(GamePath_t& Path, const std::string& DllPath);
 
     template<typename ErrorEnum>
     inline std::string ErrorFromU8(ErrorEnum Error) {
