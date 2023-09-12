@@ -8,6 +8,17 @@ import <expected>;
 
 namespace fs = std::filesystem;
 
+std::string GetCommandLineWithoutProgramName() {
+    LPSTR CommandLine = GetCommandLineA();
+    std::string commandLineStr = CommandLine;
+
+    size_t SpacePos = commandLineStr.find(' ');
+    if (SpacePos != std::string::npos)
+        return commandLineStr.substr(SpacePos + 1);
+
+    return "";
+}
+
 std::optional<std::string> GetSteamPath() {
     char cSteamPath[MAX_PATH];
     HKEY hSteamKey;
@@ -87,6 +98,8 @@ std::expected<PROCESS_INFORMATION, Launcher::InjectError> Launcher::SpawnAndInje
         return std::unexpected(Launcher::InjectError::BAD_DLL_PATH);
 
     std::string AbsoluteDllPath = fs::absolute(DllPath).string();
+
+    Path.ExecutablePath += " -launch-dir=\"" + fs::current_path().string() + "\" " + GetCommandLineWithoutProgramName();
 
     std::wstring RootDirectory = std::wstring(Path.RootPath.begin(), Path.RootPath.end());
     if (!CreateProcessW(nullptr, StringToLPWSTR(Path.ExecutablePath), nullptr, nullptr, TRUE, CREATE_DEFAULT_ERROR_MODE | CREATE_SUSPENDED,

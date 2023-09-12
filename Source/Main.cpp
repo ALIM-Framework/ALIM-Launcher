@@ -32,7 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
     //------------------------------------------------------------------------
     SetEnvironmentVariableA("SteamAppId", "214490"); // Alien Isolation will think it was launched via Steam and will not re-launch itself.
 
-    std::string DllPath = "ALIM-Core.dll"; // TODO: Change for debug builds since it's not all bundled together. Maybe use Premake to find it and make a define to the path.
+    std::string DllPath = "ALIM-Core.dll";
 
     std::expected<PROCESS_INFORMATION, Launcher::InjectError> InjectResult = Launcher::SpawnAndInject(AIPath, DllPath);
     if (!InjectResult.has_value()) {
