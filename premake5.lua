@@ -16,6 +16,7 @@ project "ALIM-Launcher"
     files { "Source/**.cpp", "Modules/**.ixx", "Modules/**.cxx" }
 
     filter "configurations:Debug"
+        links { "Imagehlp" }
         defines { "DEBUG" }
         symbols "On"
         runtime "Debug"

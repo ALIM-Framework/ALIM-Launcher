@@ -18,6 +18,7 @@ export namespace Launcher {
 
     enum class InjectError : uint8_t {
         BAD_DLL_PATH = 0,
+        BAD_DISABLE_ASLR,
         BAD_CREATE_PROCESS,
         BAD_VIRTUAL_ALLOC,
         BAD_MEMORY_WRITE,
@@ -45,6 +46,7 @@ export namespace Launcher {
         else if constexpr (std::is_same_v<ErrorEnum, Launcher::InjectError>) {
             constexpr std::string_view ErrorMessages[] = {
                 "BAD_DLL_PATH",
+                "BAD_DISABLE_ASLR",
                 "BAD_CREATE_PROCESS",
                 "BAD_VIRTUAL_ALLOC",
                 "BAD_MEMORY_WRITE",

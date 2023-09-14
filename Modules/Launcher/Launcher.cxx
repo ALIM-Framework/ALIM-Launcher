@@ -1,6 +1,9 @@
-import Launcher;
+module;
+#include <Windows.h>
+#include <ImageHlp.h>
 
-import <Windows.h>;
+module Launcher;
+
 import <filesystem>;
 import <fstream>;
 import <string>;
@@ -99,10 +102,21 @@ std::expected<PROCESS_INFORMATION, Launcher::InjectError> Launcher::SpawnAndInje
 
     std::string AbsoluteDllPath = fs::absolute(DllPath).string();
 
-    Path.ExecutablePath += " -launch-dir=\"" + fs::current_path().string() + "\" " + GetCommandLineWithoutProgramName();
-
+    std::string LaunchOptions = Path.ExecutablePath + " -launch-dir=\"" + fs::current_path().string() + "\" " + GetCommandLineWithoutProgramName();
     std::wstring RootDirectory = std::wstring(Path.RootPath.begin(), Path.RootPath.end());
-    if (!CreateProcessW(nullptr, StringToLPWSTR(Path.ExecutablePath), nullptr, nullptr, TRUE, CREATE_DEFAULT_ERROR_MODE | CREATE_SUSPENDED,
+
+    { // Disable ASLR
+        LOADED_IMAGE PE;
+        if (MapAndLoad(Path.ExecutablePath.c_str(), 0, &PE, 0, 0)) {
+            PE.FileHeader->OptionalHeader.DllCharacteristics = 0;
+        } else {
+            return std::unexpected(Launcher::InjectError::BAD_DISABLE_ASLR);
+        }
+
+        UnMapAndLoad(&PE);
+    }
+
+    if (!CreateProcessW(nullptr, StringToLPWSTR(LaunchOptions), nullptr, nullptr, TRUE, CREATE_DEFAULT_ERROR_MODE | CREATE_SUSPENDED,
         nullptr, RootDirectory.c_str(), &StartupInfo, &ProcessInfo))
     {
         return std::unexpected(Launcher::InjectError::BAD_CREATE_PROCESS);
